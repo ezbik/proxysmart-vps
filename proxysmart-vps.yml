@@ -1,0 +1,316 @@
+
+---
+- hosts: localhost
+  connection: local
+  become: True
+  gather_facts: no
+  vars:
+    haproxy_enabled: 0
+    vps_socks5_udp:  0
+
+  handlers:
+   - name: reload systemctl
+     command: systemctl daemon-reload
+     when:   ansible_service_mgr == "systemd"
+
+   - name: rsyslog restart
+     systemd:
+        state: restarted
+        name: rsyslog
+
+   - name: haproxy restart
+     systemd:
+        state: restarted
+        name: haproxy
+
+   - name: sshd restart
+     systemd:
+        state: restarted
+        name: ssh
+
+   - name: gost_proxy restart
+     systemd:
+        state: restarted
+        name: gost_proxy
+        daemon_reload: yes
+
+   - name: iperf3 restart
+     systemd:
+        state: restarted
+        name: iperf3
+        daemon_reload: yes
+
+  tasks:
+    
+   - name: install packages
+     tags: [ apt ]
+     apt:
+            name:
+                - sudo
+                - bash-completion
+                - bind9-host
+                - ca-certificates
+                - curl
+                - dnsutils
+                - git
+                - htop
+                - httping
+                - iftop
+                - iotop
+                - lftp
+                - lsof
+                - mtr-tiny
+                - net-tools
+                - nmap
+                - openssl
+                - psmisc
+                - pv
+                - rsync
+                - screen
+                - ssl-cert
+                - subversion
+                - swaks
+                - tcpdump
+                - telnet
+                - traceroute
+                - unzip
+                - usbutils
+                - vim
+                - wget
+                - whois
+                - zip
+                - iperf3
+                - rsyslog
+                - monitoring-plugins
+            state: present
+            install_recommends: no
+
+   - name: remove packages
+     apt:
+            name:
+                - rpcbind
+                - needrestart
+                - ufw
+            state: absent
+
+   - name: set gost2 ver
+     set_fact:
+        GOST2_VER: 2.11.3
+     tags: gost2
+
+   - name: set gost2 arch
+     set_fact:
+        ARCH: linux-amd64
+     tags: [gost2]
+
+   - name: set gost2 url
+     set_fact:
+        gost2_url: 'https://github.com/ginuerzh/gost/releases/download/v{{GOST2_VER}}/gost-{{ARCH}}-{{GOST2_VER}}.gz'
+     tags: gost2
+
+   - name: install gost2
+     shell:
+        cmd: "curl -L -m60 {{gost2_url}} | gunzip -dc > /usr/local/bin/gost.new && mv /usr/local/bin/gost.new /usr/local/bin/gost && chmod 755 /usr/local/bin/gost" 
+     tags: gost2
+     notify: [ gost_proxy restart ]
+
+   ###### gost3 :
+   - name: set gost3 arch
+     set_fact:
+        ARCH: linux_amd64
+     tags: [gost3]
+
+   - name: set gost3 ver
+     set_fact:
+        GOST3_VER: 3.0.0-rc8
+     tags: gost3
+
+   - name: set gost3 url
+     set_fact:
+        gost3_url: 'https://github.com/go-gost/gost/releases/download/v{{GOST3_VER}}/gost_{{GOST3_VER}}_{{ARCH}}.tar.gz'
+     tags: gost3
+
+   - name: install gost3
+     shell:
+        cmd: "curl -L -m60 {{gost3_url}}  -o /tmp/gost3.tgz  && ls -lah /tmp/gost3.tgz && rm -rf /tmp/gost3/ && mkdir -p /tmp/gost3/ && tar xf /tmp/gost3.tgz -C /tmp/gost3/ && mv /tmp/gost3/gost /usr/local/bin/gost3"
+     tags: gost3
+
+    # end gost installation
+
+   - name: create /etc/ssh/sshd_config.d
+     file:
+        path: /etc/ssh/sshd_config.d
+        state: directory
+
+   - name: set custom SSHD conf
+     copy:
+        dest: /etc/ssh/sshd_config.d/proxysmart.conf
+        content:  |
+            ClientAliveCountMax 3
+            ClientAliveInterval 3
+            GatewayPorts clientspecified
+            LoginGraceTime 10
+            MaxStartups 100:30:1000
+     notify: sshd restart
+     tags: ssh
+
+   - name: create user fwd
+     user:
+        name: fwd
+        shell: /bin/bash
+
+   - name: Set up multiple authorized keys for PROXYSMART boxes
+     tags: [ fwd, ssh ]
+     with_fileglob:
+        - "proxysmart.ssh.pubkeys/*"
+     authorized_key:
+        user: fwd
+        state: present
+        key: "{{ lookup('file', item) }}"
+
+   - name: create iperf service
+     notify: [ reload systemctl, iperf3 restart ]
+     template:
+        src: files/etc/systemd/system/iperf3.service
+        dest: /etc/systemd/system/iperf3.service
+     tags: iperf
+
+   - name: enable iperf service
+     systemd:
+        name: iperf3
+        enabled: yes
+        state: started
+        daemon_reload: yes
+     tags: iperf
+
+   - name: create gost_proxy.service (for VPN server UDP port exposing)
+     notify: [ reload systemctl, gost_proxy restart ]
+     template:
+        src: files/etc/systemd/system/gost_proxy.service
+        dest: /etc/systemd/system/gost_proxy.service
+     tags: vpn_i
+
+   - name: enable gost_proxy.service
+     systemd:
+        name: gost_proxy
+        enabled: yes
+        state: started
+     tags: vpn_i
+
+
+    ########## Gost / UDP start
+   - name: put Gost logrotate
+     tags: [ gost , logrotate ]
+     copy:
+        dest: /etc/logrotate.d/gost
+        content: |
+            /var/log/gost/*.log {
+                    missingok
+                    compress
+                    notifempty
+                    daily
+                    rotate 750
+                    copytruncate
+            }
+    ########## Gost / UDP end
+
+    ######## haproxy start
+   - name: install haproxy
+     tags: [ haproxy ]
+     apt:
+            name:
+                - haproxy
+            state: present
+            install_recommends: no
+     when:   haproxy_enabled == 1
+
+   - name: uninstall haproxy
+     tags: [ haproxy ]
+     apt:
+          name:
+              - haproxy
+          state: absent
+     when:   haproxy_enabled == 0
+
+   - name: put haproxy logrotate
+     tags: [ haproxy , logrotate ]
+     copy:
+        dest: /etc/logrotate.d/haproxy
+        content: |
+            /var/log/haproxy.log {
+                daily
+                rotate 750
+                missingok
+                notifempty
+                compress
+                postrotate
+                    /usr/lib/rsyslog/rsyslog-rotate
+                endscript
+            }
+     when:   haproxy_enabled == 1
+
+   - name: install haproxy
+     apt:
+            name:
+                - haproxy
+            state: present
+     when:   haproxy_enabled == 1
+     tags: [ haproxy ]
+
+   - name: create haproxy log if not exists
+     copy:
+        dest: /var/log/haproxy.log
+        owner: syslog
+        group: syslog
+        content: ""
+        force: false
+     tags: haproxy
+     notify: [ haproxy restart, rsyslog restart ]
+     when:   haproxy_enabled == 1
+
+   - set_fact:
+        haproxy_cfg_path: haproxy.cfg
+     tags: [ haproxy, fact ]
+
+   - name: copy haproxy conf
+     template:
+        src: VPS/{{ haproxy_cfg_path }}
+        dest: /etc/haproxy/haproxy.cfg
+     notify: [ haproxy restart, rsyslog restart ]
+     tags: haproxy
+     when:   haproxy_enabled == 1
+
+
+   - name: copy rsyslog conf for haproxy
+     copy:
+        src: VPS/49-haproxy.conf
+        dest: /etc/rsyslog.d/49-haproxy.conf
+     notify: [ haproxy restart, rsyslog restart ]
+     tags: haproxy
+     when:   haproxy_enabled == 1
+
+
+   - name: enable haproxy
+     systemd:
+        name: haproxy
+        enabled: yes
+        state: started
+     tags: haproxy
+     when:   haproxy_enabled == 1
+
+   - name: enable rsyslog
+     systemd:
+        name: rsyslog
+        enabled: yes
+        state: started
+     tags: haproxy
+    ######## haproxy end
+
+   - name: set sudoers
+     copy:
+        dest: /etc/sudoers.d/proxysmart
+        content:  |
+            fwd  ALL=NOPASSWD:  ALL
+        mode: 0400
+     tags: sudo
+
