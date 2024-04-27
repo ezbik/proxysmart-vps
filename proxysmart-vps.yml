@@ -303,7 +303,7 @@
 
    - name: copy haproxy conf
      template:
-        src: VPS/{{ haproxy_cfg_path }}
+        src: files/haproxy/{{ haproxy_cfg_path }}
         dest: /etc/haproxy/haproxy.cfg
      notify: [ haproxy restart, rsyslog restart ]
      tags: haproxy
@@ -312,7 +312,7 @@
 
    - name: copy rsyslog conf for haproxy
      copy:
-        src: VPS/49-haproxy.conf
+        src: files/haproxy/49-haproxy.conf
         dest: /etc/rsyslog.d/49-haproxy.conf
      notify: [ haproxy restart, rsyslog restart ]
      tags: haproxy
