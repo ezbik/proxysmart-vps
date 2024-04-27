@@ -191,7 +191,7 @@
    - name: Set up multiple authorized keys for PROXYSMART boxes
      tags: [ fwd, ssh ]
      with_fileglob:
-        - "proxysmart.ssh.pubkeys/*"
+        - "ssh.pubkeys/*"
      authorized_key:
         user: fwd
         state: present
