@@ -1,0 +1,4 @@
+
+haproxy_enabled: 0
+vps_socks5_udp:  0
+

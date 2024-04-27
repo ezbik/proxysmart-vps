@@ -5,8 +5,11 @@
   become: True
   gather_facts: no
   vars:
+    # default variables, override in vars.txt
     haproxy_enabled: 0
     vps_socks5_udp:  0
+  vars_files:
+    - vars.txt
 
   handlers:
    - name: reload systemctl
