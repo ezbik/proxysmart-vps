@@ -108,11 +108,24 @@
         gost2_url: 'https://github.com/ginuerzh/gost/releases/download/v{{GOST2_VER}}/gost-{{ARCH}}-{{GOST2_VER}}.gz'
      tags: gost2
 
+   - name: Check if gost2 is installed
+     command: gost -V
+     register: gost2_version
+     ignore_errors: true
+     tags: gost2
+     changed_when: false
+     failed_when: false
+
+   - debug:
+        var: gost2_version
+     tags: gost2
+
    - name: install gost2
      shell:
         cmd: "curl -L -m60 {{gost2_url}} | gunzip -dc > /usr/local/bin/gost.new && mv /usr/local/bin/gost.new /usr/local/bin/gost && chmod 755 /usr/local/bin/gost" 
      tags: gost2
      notify: [ gost_proxy restart ]
+     when: '( "msg" in gost2_version and "No such file or directory" in gost2_version.msg)  or ("stdout" in gost2_version and "{{ GOST2_VER }}" not in gost2_version.stdout)'
 
    ###### gost3 :
    - name: set gost3 arch
@@ -130,10 +143,23 @@
         gost3_url: 'https://github.com/go-gost/gost/releases/download/v{{GOST3_VER}}/gost_{{GOST3_VER}}_{{ARCH}}.tar.gz'
      tags: gost3
 
+   - name: Check if gost3 is installed
+     command: gost3 -V
+     register: gost3_version
+     ignore_errors: true
+     tags: gost3
+     changed_when: false
+     failed_when: false
+
+   - debug:
+        var: gost3_version
+     tags: gost3
+
    - name: install gost3
      shell:
         cmd: "curl -L -m60 {{gost3_url}}  -o /tmp/gost3.tgz  && ls -lah /tmp/gost3.tgz && rm -rf /tmp/gost3/ && mkdir -p /tmp/gost3/ && tar xf /tmp/gost3.tgz -C /tmp/gost3/ && mv /tmp/gost3/gost /usr/local/bin/gost3"
      tags: gost3
+     when: '( "msg" in gost3_version and "No such file or directory" in gost3_version.msg)  or ("stdout" in gost3_version and "{{ GOST3_VER }}" not in gost3_version.stdout)'
 
     # end gost installation
 
