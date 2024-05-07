@@ -8,6 +8,7 @@
     # default variables, override in vars.txt
     haproxy_enabled: 0
     vps_socks5_udp:  0
+    ssh_pub_keys: []
   vars_files:
     - vars.txt
 
@@ -190,12 +191,10 @@
 
    - name: Set up multiple authorized keys for PROXYSMART boxes
      tags: [ fwd, ssh ]
-     with_fileglob:
-        - "ssh.pubkeys/*"
+     loop: "{{ ssh_pub_keys }}"
      authorized_key:
         user: fwd
-        state: present
-        key: "{{ lookup('file', item) }}"
+        key: "{{ item }}"
 
    - name: create iperf service
      notify: [ reload systemctl, iperf3 restart ]
