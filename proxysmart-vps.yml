@@ -50,6 +50,7 @@
      tags: [ apt ]
      apt:
             name:
+                - cron
                 - sudo
                 - bash-completion
                 - bind9-host
