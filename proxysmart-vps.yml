@@ -51,6 +51,7 @@
      apt:
             name:
                 - cron
+                - logrotate
                 - sudo
                 - bash-completion
                 - bind9-host
