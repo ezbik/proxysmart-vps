@@ -2,5 +2,5 @@
 haproxy_enabled: 0
 vps_socks5_udp:  0
 ssh_pub_keys: 
- - REPLACE_THIS_WITH_PUBLIC_SSH_KEY_1
+ - REPLACE_THIS_WITH_PUBLIC_SSH_KEY_OF_A_PROXYSMART_SERVER_WITH_MODEMS
 
