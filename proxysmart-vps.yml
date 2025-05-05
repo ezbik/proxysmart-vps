@@ -45,6 +45,15 @@
         daemon_reload: yes
 
   tasks:
+
+   - stat:
+        path: '/usr/local/bin/proxysmart.sh'
+     register: px
+
+   - assert:
+        that:
+          - not px.stat.exists
+        fail_msg: "---                  dont run it on a server with Proxysmart. Run it on a VPS!               -"
     
    - name: install packages
      tags: [ apt ]
