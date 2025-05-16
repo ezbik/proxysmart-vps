@@ -174,7 +174,7 @@
      shell:
         cmd: "curl -L -m60 {{gost3_url}}  -o /tmp/gost3.tgz  && ls -lah /tmp/gost3.tgz && rm -rf /tmp/gost3/ && mkdir -p /tmp/gost3/ && tar xf /tmp/gost3.tgz -C /tmp/gost3/ && mv /tmp/gost3/gost /usr/local/bin/gost3"
      tags: gost3
-     when: '( "msg" in gost3_version and "No such file or directory" in gost3_version.msg)  or ("stdout" in gost3_version and " {{ GOST3_VER }} " not in gost3_version.stdout)'
+     when: '( "msg" in gost3_version and "No such file or directory" in gost3_version.msg)  or ("stdout" in gost3_version and "v{{ GOST3_VER }} " not in gost3_version.stdout)'
 
     # end gost installation
 
