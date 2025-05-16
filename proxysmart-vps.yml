@@ -150,7 +150,7 @@
 
    - name: set gost3 ver
      set_fact:
-        GOST3_VER: 3.0.0-rc8
+        GOST3_VER: 3.0.0
      tags: gost3
 
    - name: set gost3 url
