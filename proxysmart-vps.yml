@@ -17,6 +17,11 @@
      command: systemctl daemon-reload
      #when:   ansible_service_mgr == "systemd"
 
+   - name: nginx restart
+     systemd:
+        state: restarted
+        name: nginx
+
    - name: rsyslog restart
      systemd:
         state: restarted
@@ -97,6 +102,7 @@
                 - iperf3
                 - rsyslog
                 - monitoring-plugins
+                - nginx
             state: present
             install_recommends: no
 
@@ -107,6 +113,12 @@
                 - needrestart
                 - ufw
             state: absent
+
+   - name: nginx del default vhost
+     file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+     notify: [ nginx restart ] 
 
    - name: set gost2 ver
      set_fact:
