@@ -85,7 +85,7 @@
 
    - name: Fail if main IP is private
      fail:
-        msg: "Main IP {{ main_ip }} is private. Public IP is required."
+        msg: "Main IP {{ main_ip }} is private on interface {{ interface }}. Public IP is required."
      when: main_ip is match('^(10\\.|192\\.168\\.|172\\.(1[6-9]|2[0-9]|3[0-1])\\.)')
 
 ###### end check private IP
