@@ -148,7 +148,7 @@
      file:
         path: /etc/nginx/sites-enabled/default
         state: absent
-     notify: [ nginx restart ]
+     notify: [ nginx restart ] 
 
    - name: set gost2 ver
      set_fact:
