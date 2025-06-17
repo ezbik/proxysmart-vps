@@ -59,7 +59,7 @@
         that:
           - not px.stat.exists
         fail_msg: "---                  dont run it on a server with Proxysmart. Run it on a VPS!               -"
-
+    
 ###### start check private IP
 
    - name: Get default interface (if not provided)
