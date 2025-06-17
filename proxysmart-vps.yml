@@ -132,6 +132,7 @@
                 - iperf3
                 - rsyslog
                 - monitoring-plugins
+                - nginx
             state: present
             install_recommends: no
 
