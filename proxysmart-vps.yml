@@ -55,6 +55,36 @@
           - not px.stat.exists
         fail_msg: "---                  dont run it on a server with Proxysmart. Run it on a VPS!               -"
     
+###### start check private IP
+
+   - name: Get default interface (if not provided)
+     command: ip route get 8.8.8.8
+     register: route_info
+     changed_when: false
+
+   - name: Set default interface fact
+     set_fact:
+        interface: "{{ route_info.stdout.split('dev')[1].split()[0] }}"
+
+   - name: Get IP address of main interface
+     command: ip -o -4 addr show dev {{ interface }} scope global
+     register: ip_info
+     changed_when: false
+
+   - name: Extract IP address
+     set_fact:
+        main_ip: "{{ ip_info.stdout | regex_search('\\d+\\.\\d+\\.\\d+\\.\\d+') }}"
+
+   #- set_fact: main_ip=10.23.23.233
+   - debug: var=main_ip
+
+   - name: Fail if main IP is private
+     fail:
+        msg: "Main IP {{ main_ip }} is private on interface {{ interface }}. Public IP is required."
+     when: main_ip is match('^(10\\.|192\\.168\\.|172\\.(1[6-9]|2[0-9]|3[0-1])\\.)')
+
+###### end check private IP
+
    - name: install packages
      tags: [ apt ]
      apt:
