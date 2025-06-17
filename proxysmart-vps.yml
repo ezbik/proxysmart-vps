@@ -17,6 +17,11 @@
      command: systemctl daemon-reload
      #when:   ansible_service_mgr == "systemd"
 
+   - name: nginx restart
+     systemd:
+        state: restarted
+        name: nginx
+
    - name: rsyslog restart
      systemd:
         state: restarted
