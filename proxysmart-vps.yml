@@ -144,6 +144,12 @@
                 - ufw
             state: absent
 
+   - name: nginx del default vhost
+     file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+     notify: [ nginx restart ]
+
    - name: set gost2 ver
      set_fact:
         GOST2_VER: 2.11.3
