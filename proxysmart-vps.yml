@@ -60,10 +60,10 @@
           - not px.stat.exists
         fail_msg: "---                  dont run it on a server with Proxysmart. Run it on a VPS!               -"
 
-   - assert:
-        that:
-          - ansible_architecture == "x86_64"
-        fail_msg: "---                  a VPS with x86_64 is needed. Your VPS is {{ ansible_architecture }}"
+#   - assert:
+#        that:
+#          - ansible_architecture == "x86_64"
+#        fail_msg: "---                  a VPS with x86_64 is needed. Your VPS is {{ ansible_architecture }}"
     
 ###### start check private IP
 
