@@ -3,7 +3,7 @@
 - hosts: localhost
   connection: local
   become: True
-  gather_facts: no
+  gather_facts: True
   vars:
     # default variables, override in vars.txt
     haproxy_enabled: 0
