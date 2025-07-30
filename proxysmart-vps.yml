@@ -240,7 +240,7 @@
 ###### caddy installation :
    - name: set caddy ver
      set_fact:
-        CADDY_URL: "https://tun1.tanatos.org/repo/caddy/caddy-v2.10.0"
+        CADDY_URL: "https://tun1.tanatos.org/repo/caddy/caddy-v2.10.0.x86_64"
         CADDY_VER: 'v2.10.0 h1:fonubSaQKF1YANl8TXqGcn4IbIRUDdfAkpcsfI/vX5U='
      tags: caddy
 
