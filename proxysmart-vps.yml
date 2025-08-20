@@ -76,12 +76,6 @@
           - ansible_architecture == "x86_64"
         fail_msg: "---                  a VPS with x86_64 is needed. Your VPS is {{ ansible_architecture }}"
     
-   - name: check architecture
-     assert:
-        that:
-          - ansible_architecture == "x86_64"
-        fail_msg: "---                  a VPS with x86_64 is needed. Your VPS is {{ ansible_architecture }}"
-
 ###### start check private IP
 
    - name: Get default interface (if not provided)
