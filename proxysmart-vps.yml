@@ -64,7 +64,7 @@
         that:
           - not px.stat.exists
         fail_msg: "---                  dont run it on a server with Proxysmart. Run it on a VPS!               -"
-    
+
    - name: check architecture
      assert:
         that:
