@@ -22,6 +22,11 @@
         state: restarted
         name: nginx
 
+   - name: pmacctd_head restart
+     systemd:
+        state: restarted
+        name: pmacctd_head
+
    - name: rsyslog restart
      systemd:
         state: restarted
@@ -513,7 +518,7 @@
    - name: put Pmacct conf file
      notify: [ pmacctd_head restart ]
      copy:
-        src: VPS/etc/pmacct/pmacctd_h.conf
+        src: files/etc/pmacct/pmacctd_h.conf
         dest: /etc/pmacct/pmacctd_h.conf
      tags: [ pmacct ]
 
