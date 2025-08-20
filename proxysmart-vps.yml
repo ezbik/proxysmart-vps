@@ -406,3 +406,59 @@
         mode: 0400
      tags: sudo
 
+   ############ Pmacct start
+
+   - name: install pmacct
+     tags: [ pmacct ]
+     apt:
+            name:
+                - pmacct
+            state: present
+            install_recommends: no
+
+   - name: put Pmacct logrotate
+     tags: [ pmacct, logrotate ]
+     copy:
+        dest: /etc/logrotate.d/pmacctd_head
+        content: |
+            /var/log/pmacct_head.json {
+                    missingok
+                    compress
+                    notifempty
+                    daily
+                    rotate {{ logrotate_days }}
+                    copytruncate
+            }
+            /var/log/pmacctd_h.log {
+                    missingok
+                    compress
+                    notifempty
+                    daily
+                    rotate 7
+                    copytruncate
+            }
+
+   - name: put Pmacct conf file
+     notify: [ pmacctd_head restart ]
+     copy:
+        src: files/etc/pmacct/pmacctd_h.conf
+        dest: /etc/pmacct/pmacctd_h.conf
+     tags: [ pmacct ]
+
+   - name: create Pmacct service
+     notify: [ reload systemctl, pmacctd_head restart ]
+     template:
+        src: files/etc/systemd/system/pmacctd_head.service
+        dest: /etc/systemd/system/pmacctd_head.service
+     tags: pmacct
+
+   - name: enable Pmacct service
+     systemd:
+        name: pmacctd_head
+        enabled: yes
+        state: started
+        daemon_reload: yes
+     tags: pmacct
+
+   ############ Pmacct End
+
