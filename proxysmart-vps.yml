@@ -11,6 +11,20 @@
     ssh_pub_keys: []
     VPS_SOCKS5_SERVER_LOGIN:        px
     VPS_SOCKS5_SERVER_PASSWORD:     g739Az8JYK
+
+  pre_tasks:
+    - name: Check if vars.txt exists
+      stat:
+        path: ./vars.txt
+      register: vars_file
+
+    - name: Fail if vars.txt is missing
+      fail:
+        msg: |
+          "vars.txt not found!
+           Please copy vars.txt.example to vars.txt and edit it with your values."
+      when: not vars_file.stat.exists
+
   vars_files:
     - vars.txt
 
