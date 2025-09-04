@@ -391,6 +391,8 @@
                     daily
                     rotate 750
                     copytruncate
+                    dateext
+                    dateformat -%Y-%m-%d_%H-%M-%S
             }
     ########## Gost / UDP end
 
