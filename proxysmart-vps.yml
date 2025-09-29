@@ -77,7 +77,7 @@
 
   tasks:
 
-   - name: Check OS name and version 
+   - name: Check OS name and version
      assert:
         that:
           - ansible_facts['distribution'] == "Ubuntu"
