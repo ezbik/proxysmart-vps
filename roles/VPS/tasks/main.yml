@@ -113,6 +113,8 @@
         state: absent
      notify: [ nginx restart ] 
 
+## gost install start
+   ###### gost2 :
    - name: set gost2 ver
      set_fact:
         GOST2_VER: 2.11.3
@@ -339,9 +341,9 @@
    - name: uninstall haproxy
      tags: [ haproxy ]
      apt:
-          name:
+            name:
               - haproxy
-          state: absent
+            state: absent
      when:   haproxy_enabled == 0
 
    - name: put haproxy logrotate
@@ -360,14 +362,6 @@
                 endscript
             }
      when:   haproxy_enabled == 1
-
-   - name: install haproxy
-     apt:
-            name:
-                - haproxy
-            state: present
-     when:   haproxy_enabled == 1
-     tags: [ haproxy ]
 
    - name: create haproxy log if not exists
      copy:
