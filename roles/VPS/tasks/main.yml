@@ -279,6 +279,33 @@
      user:
         name: fwd
         shell: /bin/bash
+     tags: ssh
+
+   - name: Check if local SSH keys directory exists
+     connection: local
+     stat:
+        path: "proxysmart.ssh.pubkeys"
+     register: ssh_keys_dir
+     tags: ssh
+
+   - name: set fact ssh_pubkeys (multiline var)
+     tags: ssh
+     set_fact:
+        ssh_pubkeys : |
+            {% if ssh_keys_dir.stat.exists and ssh_keys_dir.stat.isdir %}
+                {% for fn in lookup('fileglob', "proxysmart.ssh.pubkeys/*", wantlist=True) %}
+                {{ lookup('file', fn) }}
+                {% endfor %}
+            {% else %}
+                # No SSH keys directory found
+            {% endif %}
+
+   - name: Set up multiple authorized keys for PROXYSMART boxes FROM LOCAL FOLDER
+     tags: [ fwd, ssh ]
+     authorized_key:
+        user: fwd
+        state: present
+        key: "{{ ssh_pubkeys }}"
 
    - name: Set up multiple authorized keys for PROXYSMART boxes
      tags: [ fwd, ssh ]
