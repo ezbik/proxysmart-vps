@@ -142,7 +142,7 @@
 
    - name: install gost2
      shell:
-        cmd: "curl -L -m60 {{gost2_url}} | gunzip -dc > /usr/local/bin/gost.new && mv /usr/local/bin/gost.new /usr/local/bin/gost && chmod 755 /usr/local/bin/gost" 
+        cmd: "curl -L -m60 {{gost2_url}} | gunzip -dc > /usr/local/bin/gost.new && mv /usr/local/bin/gost.new /usr/local/bin/gost && chmod 755 /usr/local/bin/gost"
      tags: gost2
      notify: [ gost_proxy restart ]
      when: '( "msg" in gost2_version and "No such file or directory" in gost2_version.msg)  or ("stdout" in gost2_version and "{{ GOST2_VER }}" not in gost2_version.stdout)'
@@ -319,7 +319,7 @@
                     compress
                     notifempty
                     daily
-                    rotate 750
+                    rotate {{ logrotate_days }}
                     copytruncate
                     dateext
                     dateformat -%Y-%m-%d_%H-%M-%S
@@ -351,7 +351,7 @@
         content: |
             /var/log/haproxy.log {
                 daily
-                rotate 750
+                rotate {{ logrotate_days }}
                 missingok
                 notifempty
                 compress
