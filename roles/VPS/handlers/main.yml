@@ -1,0 +1,45 @@
+   - name: reload systemctl
+     command: systemctl daemon-reload
+     #when:   ansible_service_mgr == "systemd"
+
+   - name: nginx restart
+     systemd:
+        state: restarted
+        name: nginx
+
+   - name: pmacctd_head restart
+     systemd:
+        state: restarted
+        name: pmacctd_head
+
+   - name: rsyslog restart
+     systemd:
+        state: restarted
+        name: rsyslog
+
+   - name: haproxy restart
+     systemd:
+        state: restarted
+        name: haproxy
+
+   - name: sshd restart
+     systemd:
+        state: restarted
+        name: ssh
+
+   - name: caddy restart
+     systemd:
+        state: restarted
+        name: ssh
+
+   - name: gost_proxy restart
+     systemd:
+        state: restarted
+        name: gost_proxy
+        daemon_reload: yes
+
+   - name: iperf3 restart
+     systemd:
+        state: restarted
+        name: iperf3
+        daemon_reload: yes

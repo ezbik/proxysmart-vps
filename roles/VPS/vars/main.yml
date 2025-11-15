@@ -1,0 +1,6 @@
+    # default variables, override in vars.txt
+    haproxy_enabled: 0
+    vps_socks5_udp:  0
+    ssh_pub_keys: []
+    VPS_SOCKS5_SERVER_LOGIN:        px
+    VPS_SOCKS5_SERVER_PASSWORD:     g739Az8JYK
