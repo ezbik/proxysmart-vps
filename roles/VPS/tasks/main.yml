@@ -53,6 +53,15 @@
 
 ###### end check private IP
 
+   - name: remove packages
+     apt:
+            name:
+                - rpcbind
+                - needrestart
+                - ufw
+                - apache2
+            state: absent
+
    - name: install packages
      tags: [ apt ]
      apt:
@@ -98,14 +107,6 @@
                 - nginx
             state: present
             install_recommends: no
-
-   - name: remove packages
-     apt:
-            name:
-                - rpcbind
-                - needrestart
-                - ufw
-            state: absent
 
    - name: nginx del default vhost
      file:
