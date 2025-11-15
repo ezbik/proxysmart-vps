@@ -255,7 +255,8 @@
      authorized_key:
         user: root
         state: present
-        key: '{{ root_pub_keys }}'
+        key: '{{ item }}'
+     loop: "{{ root_pub_keys }}"
      tags: [ ssh ]
 
    - name: create /etc/ssh/sshd_config.d
