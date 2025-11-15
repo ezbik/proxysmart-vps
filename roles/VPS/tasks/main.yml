@@ -374,18 +374,13 @@
      notify: [ haproxy restart, rsyslog restart ]
      when:   haproxy_enabled == 1
 
-   - set_fact:
-        haproxy_cfg_path: haproxy.cfg
-     tags: [ haproxy, fact ]
-
    - name: copy haproxy conf
      template:
-        src: files/haproxy/{{ haproxy_cfg_path }}
+        src: files/haproxy/haproxy.cfg
         dest: /etc/haproxy/haproxy.cfg
      notify: [ haproxy restart, rsyslog restart ]
      tags: haproxy
      when:   haproxy_enabled == 1
-
 
    - name: copy rsyslog conf for haproxy
      copy:
@@ -395,7 +390,6 @@
      tags: haproxy
      when:   haproxy_enabled == 1
 
-
    - name: enable haproxy
      systemd:
         name: haproxy
@@ -403,6 +397,14 @@
         state: started
      tags: haproxy
      when:   haproxy_enabled == 1
+
+   - name: disable haproxy
+     systemd:
+        name: haproxy
+        enabled: no
+        state: stopped
+     tags: haproxy
+     when:   haproxy_enabled == 0
 
    - name: enable rsyslog
      systemd:
@@ -419,6 +421,13 @@
             fwd  ALL=NOPASSWD:  ALL
         mode: 0400
      tags: sudo
+
+   - name: put vps helper
+     tags: files
+     copy:
+        src: files/usr/local/bin/vps_helper.sh
+        dest: /usr/local/bin/vps_helper.sh
+        mode: 0755
 
    ############ Pmacct start
 
