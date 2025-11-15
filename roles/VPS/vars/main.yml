@@ -5,3 +5,4 @@
     ssh_pub_keys: []
     VPS_SOCKS5_SERVER_LOGIN:        px
     VPS_SOCKS5_SERVER_PASSWORD:     g739Az8JYK
+    root_pub_keys: []

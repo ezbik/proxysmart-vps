@@ -251,6 +251,13 @@
 
 #    # end caddy installation
 
+   - name: Set up multiple authorized keys for ROOT
+     authorized_key:
+        user: root
+        state: present
+        key: '{{ root_pub_keys }}'
+     tags: [ ssh ]
+
    - name: create /etc/ssh/sshd_config.d
      file:
         path: /etc/ssh/sshd_config.d
