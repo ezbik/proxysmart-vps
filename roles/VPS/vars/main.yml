@@ -1,4 +1,5 @@
     # default variables, override in vars.txt
+    logrotate_days: 750
     haproxy_enabled: 0
     vps_socks5_udp:  0
     ssh_pub_keys: []
