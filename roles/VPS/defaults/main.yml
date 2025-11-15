@@ -1,2 +1,8 @@
----
-# defaults file for VPS
+    # default variables, override in vars.txt
+    logrotate_days: 750
+    haproxy_enabled: 1
+    vps_socks5_udp:  1
+    ssh_pub_keys: []
+    VPS_SOCKS5_SERVER_LOGIN:        px
+    VPS_SOCKS5_SERVER_PASSWORD:     g739Az8JYK
+    root_pub_keys: []
