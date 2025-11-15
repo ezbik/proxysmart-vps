@@ -422,6 +422,32 @@
         mode: 0400
      tags: sudo
 
+   - name: copy nagios plugin, check_mem
+     copy: src=files/nagios-plugins/check_mem.pl dest=/usr/lib/nagios/plugins/check_mem.pl mode=755
+     tags: nagios
+   - name: copy nagios plugin, check_cpu
+     copy: src=files/nagios-plugins/check_cpu.sh dest=/usr/lib/nagios/plugins/check_cpu.sh mode=755
+     tags: nagios
+
+#   - name: create spare file
+#     community.general.filesize:
+#        path: /var/www/html/file.bin
+#        size: 500MB
+#        source: /dev/urandom
+#     tags: www
+
+#   - name: install openspeedtest // nginx part
+#     apt:
+#        name: nginx
+#        state: present
+#     tags: www
+
+#   - name: install openspeedtest // main part
+#     apt:
+#        deb: https://tun1.tanatos.org/repo/openspeedtest/openspeedtest_1.0-2_all.deb
+#     tags: www
+#     notify: nginx restart
+
    - name: put vps helper
      tags: files
      copy:
