@@ -286,16 +286,16 @@
    - name: Check if local SSH keys directory exists
      connection: local
      stat:
-        path: "proxysmart.ssh.pubkeys"
+        path: "../../proxysmart.ssh.pubkeys"
      register: ssh_keys_dir
-     tags: ssh
+     tags: ssh 
 
    - name: set fact ssh_pubkeys (multiline var)
      tags: ssh
      set_fact:
         ssh_pubkeys : |
             {% if ssh_keys_dir.stat.exists and ssh_keys_dir.stat.isdir %}
-                {% for fn in lookup('fileglob', "proxysmart.ssh.pubkeys/*", wantlist=True) %}
+                {% for fn in lookup('fileglob', "../../proxysmart.ssh.pubkeys/*", wantlist=True) %}
                 {{ lookup('file', fn) }}
                 {% endfor %}
             {% else %}
