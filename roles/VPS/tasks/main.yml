@@ -287,7 +287,7 @@
    - name: Set up multiple authorized keys for PROXYSMART boxes FROM LOCAL FOLDER
      tags: [ fwd, ssh ]
      authorized_key:
-        path: /tmp/test.pub
+        #path: /tmp/test.pub
         user: fwd
         state: present
         key: "{{ lookup('file', item) }}"
