@@ -9,7 +9,6 @@ Steps on the VPS
 
 - put public ssh key from the Proxysmart server in `ssh_pub_keys` list ( check vars.txt ) as an option of the role.
 - or put public ssh key from the Proxysmart server in `./proxysmart.ssh.pubkeys/` , 1 server == 1 file == 1 pub.key
-
 - then apply the role:
 
 ```
