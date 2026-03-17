@@ -557,5 +557,20 @@
         daemon_reload: yes
      tags: pmacct
 
+   - name: put vps helper
+     tags: files
+     copy:
+        src: files/usr/local/bin/vps_helper.sh
+        dest: /usr/local/bin/vps_helper.sh
+        mode: 0755
+
+   - name: cron, install vps helper
+     tags: cron
+     cron:
+        name: vps helper
+        job:  /usr/local/bin/vps_helper.sh purge_orphaned_socks_servers
+        minute: "12,42"
+        hour:   "*"
+
    ############ Pmacct End
 
